@@ -1,6 +1,9 @@
 name: C/C++ CI
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch: # This enables the manual trigger button in the Actions tab
 
 jobs:
   build:
@@ -29,7 +32,6 @@ jobs:
     steps:
       - name: Set up build environment (macOS)
         run: |
-          # Unlink and re-link to prevent errors when github mac runner images install python outside of brew. See https://github.com/actions/setup-python/issues/577
           brew list -1 | grep python | while read formula; do brew unlink $formula; brew link --overwrite $formula; done
           brew update || :
           brew install libao ldid pulseaudio
@@ -177,4 +179,3 @@ jobs:
         env:
           SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
         if: ${{ env.SENTRY_TOKEN != '' && (matrix.config.name == 'x86_64-w64-mingw32' || matrix.config.name == 'apple-darwin' || matrix.config.name == 'x86_64-pc-linux-gnu') }}
-        
